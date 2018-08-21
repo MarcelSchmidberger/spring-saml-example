@@ -3,11 +3,13 @@ package com.marcelschmidberger.samlexample;
 import static org.springframework.security.extensions.saml2.config.SAMLConfigurer.saml;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.saml.log.SAMLDefaultLogger;
 
 @EnableWebSecurity
 @Configuration
@@ -37,6 +39,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
             .apply(saml())
                 .serviceProvider()
+                
                     .keyStore()
                         .storeFilePath(this.keyStoreFilePath)
                         .password(this.password)
@@ -50,5 +53,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .identityProvider()
                 .metadataFilePath(this.metadataUrl);
     }
+ // Logger for SAML messages and events
+    @Bean
+    public SAMLDefaultLogger samlDefaultLogger() {
+        SAMLDefaultLogger samlDefaultLogger = new SAMLDefaultLogger();
+        samlDefaultLogger.setLogMessages(true);
+        samlDefaultLogger.setLogErrors(true);
+        return samlDefaultLogger;
+    }
+    
     
 }
